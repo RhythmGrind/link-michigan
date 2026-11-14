@@ -1,0 +1,588 @@
+import {
+  FactoryDestination,
+  SafeHubStation,
+  WorkerProfile,
+  FleetVehicle,
+  CostAllocationSummary,
+  WeatherCondition,
+  WatsonxDecisionLog,
+} from '../types/transit';
+import { HIGH_RES_ROUTE_2 } from './highResRoutes';
+
+// ---------------------------------------------------------------------------
+// Employer Destinations — 3 Real Mid-Sized Downtown Detroit Tech Companies
+// ---------------------------------------------------------------------------
+export const DETROIT_FACTORIES: FactoryDestination[] = [
+  {
+    id: 'fac-1',
+    name: 'Detroit Labs (Woodward Ave)',
+    industry: 'Custom Software & Mobile App Development',
+    city: '1520 Woodward Ave, Downtown Detroit',
+    coordinates: { lat: 42.3342, lng: -83.0490 },
+    shiftStartTime: '09:00 AM',
+    targetArrivalTime: '08:50 AM',
+    totalWorkersExpecting: 38,
+    criticalLineRole: 'Software Engineering & Apprenticeship Cohort',
+  },
+  {
+    id: 'fac-2',
+    name: 'Autobooks (Madison Bldg)',
+    industry: 'Small-Business FinTech Platform',
+    city: '1555 Broadway St, Downtown Detroit',
+    coordinates: { lat: 42.3360, lng: -83.0455 },
+    shiftStartTime: '09:00 AM',
+    targetArrivalTime: '08:48 AM',
+    totalWorkersExpecting: 29,
+    criticalLineRole: 'Product, Data & Full-Stack Engineering',
+  },
+  {
+    id: 'fac-3',
+    name: 'Capitol Park Tech Collective',
+    industry: 'Mobility Software & Cloud Startups',
+    city: '1420 Washington Blvd, Downtown Detroit',
+    coordinates: { lat: 42.3322, lng: -83.0515 },
+    shiftStartTime: '09:00 AM',
+    targetArrivalTime: '08:52 AM',
+    totalWorkersExpecting: 24,
+    criticalLineRole: 'Cloud DevOps, UX & QA Engineering',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// SafeHub Pickup Stations — 4 Core Neighborhood Hubs + 2 Scaled Corridor Hubs
+// ---------------------------------------------------------------------------
+export const SAFE_HUB_STATIONS: SafeHubStation[] = [
+  {
+    id: 'hub-wayne',
+    name: 'Wayne State Hub',
+    category: 'community_lot',
+    address: '5221 Gullen Mall, Detroit, MI 48202',
+    coordinates: { lat: 42.3575, lng: -83.0660 },
+    scheduledPickupTime: '08:26 AM',
+    estimatedArrivalMinutes: 4,
+    assignedWorkerIds: ['worker-bob', 'worker-alice', 'worker-grace'],
+    features: [
+      '24/7 Heated Campus Atrium',
+      'Campus Security',
+      'Covered Boarding Zone',
+      '400m Walking Catchment',
+    ],
+    status: 'approaching',
+    heatingStatus: 'ACTIVE',
+    store24Hour: true,
+    walkingSavedMeters: 420,
+  },
+  {
+    id: 'hub-woodbridge',
+    name: 'Woodbridge Hub',
+    category: 'community_lot',
+    address: '4410 Trumbull Ave, Detroit, MI 48208',
+    coordinates: { lat: 42.3490, lng: -83.0772 },
+    scheduledPickupTime: '08:31 AM',
+    estimatedArrivalMinutes: 9,
+    assignedWorkerIds: ['worker-charlie', 'worker-david', 'worker-ivan'],
+    features: [
+      'Heated Corner Shelter',
+      '24/7 Lighting',
+      'Direct Sidewalk Access',
+      '400m Walking Catchment',
+    ],
+    status: 'upcoming',
+    heatingStatus: 'ACTIVE',
+    store24Hour: true,
+    walkingSavedMeters: 390,
+  },
+  {
+    id: 'hub-newcenter',
+    name: 'TechTown / New Center Hub',
+    category: 'community_lot',
+    address: '440 Burroughs St, Detroit, MI 48202',
+    coordinates: { lat: 42.3665, lng: -83.0695 },
+    scheduledPickupTime: '08:20 AM',
+    estimatedArrivalMinutes: 2,
+    assignedWorkerIds: ['worker-eve', 'worker-frank'],
+    features: [
+      'TechTown Heated Lobby',
+      '24/7 Indoor Waiting',
+      'Bike & Scooter Dock',
+      '450m Walking Catchment',
+    ],
+    status: 'upcoming',
+    heatingStatus: 'ACTIVE',
+    store24Hour: true,
+    walkingSavedMeters: 480,
+  },
+  {
+    id: 'hub-eastern',
+    name: 'Brush Park Hub',
+    category: 'community_lot',
+    address: '2640 John R St, Detroit, MI 48201',
+    coordinates: { lat: 42.3445, lng: -83.0545 },
+    scheduledPickupTime: '08:37 AM',
+    estimatedArrivalMinutes: 14,
+    assignedWorkerIds: ['worker-mallory', 'worker-oscar'],
+    features: [
+      'Heated Corner Lounge',
+      '24/7 Street Lighting',
+      'High-Visibility Curb',
+      '380m Walking Catchment',
+    ],
+    status: 'upcoming',
+    heatingStatus: 'ACTIVE',
+    store24Hour: true,
+    walkingSavedMeters: 380,
+  },
+  {
+    id: 'hub-corktown',
+    name: 'Corktown Hub',
+    category: 'community_lot',
+    address: '2050 Michigan Ave, Detroit, MI 48216',
+    coordinates: { lat: 42.3335, lng: -83.0715 },
+    scheduledPickupTime: '08:39 AM',
+    estimatedArrivalMinutes: 15,
+    assignedWorkerIds: ['worker-trent', 'worker-victor', 'worker-judy'],
+    features: [
+      'Heated Lobby Access',
+      '24/7 Monitored Stop',
+      '350m Walking Catchment',
+    ],
+    status: 'upcoming',
+    heatingStatus: 'ACTIVE',
+    store24Hour: true,
+    walkingSavedMeters: 350,
+  },
+  {
+    id: 'hub-rivertown',
+    name: 'Lafayette Park Hub',
+    category: 'community_lot',
+    address: '1550 E Lafayette St, Detroit, MI 48207',
+    coordinates: { lat: 42.3385, lng: -83.0385 },
+    scheduledPickupTime: '08:41 AM',
+    estimatedArrivalMinutes: 16,
+    assignedWorkerIds: ['worker-peggy', 'worker-sybil', 'worker-heidi'],
+    features: [
+      'Heated Plaza Shelter',
+      '24/7 Security Lighting',
+      '420m Walking Catchment',
+    ],
+    status: 'upcoming',
+    heatingStatus: 'ACTIVE',
+    store24Hour: true,
+    walkingSavedMeters: 420,
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Default 10-Worker Young-Talent Roster (Distributed Across 4 Core Hubs)
+// Well-spaced around TechTown/New Center, Wayne State, Woodbridge, and Brush Park
+// ---------------------------------------------------------------------------
+export const WORKER_PROFILES: WorkerProfile[] = [
+  // --- Wayne State Hub (3 Young Professionals) ---
+  {
+    id: 'worker-bob',
+    name: 'Bob',
+    role: 'Jr. Software Engineer @ Detroit Labs',
+    factoryId: 'fac-1',
+    homeAddress: 'Studio @ One Apartments, Midtown Detroit',
+    coordinates: { lat: 42.3608, lng: -83.0615 },
+    assignedStationId: 'hub-wayne',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Studio @ One Student Apartments (Wayne State)',
+    baselineTransitMins: 44,
+    shuttleCommuteMins: 11,
+  },
+  {
+    id: 'worker-alice',
+    name: 'Alice',
+    role: 'Data Analyst @ Autobooks',
+    factoryId: 'fac-2',
+    homeAddress: 'The Towers at Wayne State, Midtown Detroit',
+    coordinates: { lat: 42.3552, lng: -83.0710 },
+    assignedStationId: 'hub-wayne',
+    walkTimeMinutes: 3,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'The Towers at Wayne State Sublease',
+    baselineTransitMins: 46,
+    shuttleCommuteMins: 11,
+  },
+  {
+    id: 'worker-grace',
+    name: 'Grace',
+    role: 'QA Engineer @ Capitol Park Tech',
+    factoryId: 'fac-3',
+    homeAddress: 'Prentis Student Co-op, Cass Corridor',
+    coordinates: { lat: 42.3598, lng: -83.0702 },
+    assignedStationId: 'hub-wayne',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Prentis Student Co-op (Midtown)',
+    baselineTransitMins: 45,
+    shuttleCommuteMins: 11,
+  },
+
+  // --- Woodbridge Hub (3 Young Professionals) ---
+  {
+    id: 'worker-charlie',
+    name: 'Charlie',
+    role: 'UX Designer @ Autobooks',
+    factoryId: 'fac-2',
+    homeAddress: 'Woodbridge Historic Co-op, Detroit',
+    coordinates: { lat: 42.3522, lng: -83.0818 },
+    assignedStationId: 'hub-woodbridge',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Woodbridge Historic Co-op',
+    baselineTransitMins: 48,
+    shuttleCommuteMins: 12,
+  },
+  {
+    id: 'worker-david',
+    name: 'David',
+    role: 'Cloud DevOps Associate @ Detroit Labs',
+    factoryId: 'fac-1',
+    homeAddress: 'Cass Corridor Lofts, Detroit',
+    coordinates: { lat: 42.3458, lng: -83.0738 },
+    assignedStationId: 'hub-woodbridge',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Cass Corridor Shared Lofts',
+    baselineTransitMins: 48,
+    shuttleCommuteMins: 11,
+  },
+  {
+    id: 'worker-ivan',
+    name: 'Ivan',
+    role: 'Mobile Dev @ Capitol Park Tech',
+    factoryId: 'fac-3',
+    homeAddress: 'Trumbull Victorian Sublease, Woodbridge',
+    coordinates: { lat: 42.3478, lng: -83.0825 },
+    assignedStationId: 'hub-woodbridge',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Trumbull Victorian Sublease',
+    baselineTransitMins: 47,
+    shuttleCommuteMins: 11,
+  },
+
+  // --- TechTown / New Center Hub (2 Young Professionals) ---
+  {
+    id: 'worker-eve',
+    name: 'Eve',
+    role: 'Product Analyst @ Detroit Labs',
+    factoryId: 'fac-1',
+    homeAddress: 'New Center Commons Studio, Detroit',
+    coordinates: { lat: 42.3692, lng: -83.0660 },
+    assignedStationId: 'hub-newcenter',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'New Center Commons Grad Studio',
+    baselineTransitMins: 47,
+    shuttleCommuteMins: 13,
+  },
+  {
+    id: 'worker-frank',
+    name: 'Frank',
+    role: 'Backend Developer @ Autobooks',
+    factoryId: 'fac-2',
+    homeAddress: 'Baltimore Station Lofts, New Center',
+    coordinates: { lat: 42.3648, lng: -83.0742 },
+    assignedStationId: 'hub-newcenter',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Baltimore Station Shared Lofts',
+    baselineTransitMins: 49,
+    shuttleCommuteMins: 13,
+  },
+
+  // --- Brush Park Hub (2 Young Professionals) ---
+  {
+    id: 'worker-mallory',
+    name: 'Mallory',
+    role: 'Full-Stack Developer @ Detroit Labs',
+    factoryId: 'fac-1',
+    homeAddress: 'Brush Park Grad Flat, Detroit',
+    coordinates: { lat: 42.3472, lng: -83.0505 },
+    assignedStationId: 'hub-eastern',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Brush Park Grad Flat',
+    baselineTransitMins: 42,
+    shuttleCommuteMins: 10,
+  },
+  {
+    id: 'worker-oscar',
+    name: 'Oscar',
+    role: 'Frontend Engineer @ Capitol Park Tech',
+    factoryId: 'fac-3',
+    homeAddress: 'John R Student Sublease, Brush Park',
+    coordinates: { lat: 42.3422, lng: -83.0585 },
+    assignedStationId: 'hub-eastern',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'John R Student Sublease',
+    baselineTransitMins: 43,
+    shuttleCommuteMins: 10,
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Scaled 16-Worker Dataset — Adds 6 Young Professionals in Corktown & Lafayette Park
+// ---------------------------------------------------------------------------
+export const SCALED_WORKER_PROFILES: WorkerProfile[] = [
+  ...WORKER_PROFILES,
+  {
+    id: 'worker-heidi',
+    name: 'Heidi',
+    role: 'Cybersecurity Associate @ Autobooks',
+    factoryId: 'fac-2',
+    homeAddress: 'Elmwood Park Co-op, Detroit',
+    coordinates: { lat: 42.3418, lng: -83.0345 },
+    assignedStationId: 'hub-rivertown',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Elmwood Park Young Grad Co-op',
+    baselineTransitMins: 46,
+    shuttleCommuteMins: 11,
+  },
+  {
+    id: 'worker-peggy',
+    name: 'Peggy',
+    role: 'Data Science Associate @ Detroit Labs',
+    factoryId: 'fac-1',
+    homeAddress: 'Lafayette Towers Sublease, Detroit',
+    coordinates: { lat: 42.3395, lng: -83.0428 },
+    assignedStationId: 'hub-rivertown',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Lafayette Towers Sublease',
+    baselineTransitMins: 45,
+    shuttleCommuteMins: 11,
+  },
+  {
+    id: 'worker-sybil',
+    name: 'Sybil',
+    role: 'UX Researcher @ Capitol Park Tech',
+    factoryId: 'fac-3',
+    homeAddress: 'Rivertown Shared Loft, Detroit',
+    coordinates: { lat: 42.3352, lng: -83.0365 },
+    assignedStationId: 'hub-rivertown',
+    walkTimeMinutes: 5,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Rivertown Shared Loft',
+    baselineTransitMins: 48,
+    shuttleCommuteMins: 12,
+  },
+  {
+    id: 'worker-judy',
+    name: 'Judy',
+    role: 'FinTech QA Analyst @ Autobooks',
+    factoryId: 'fac-2',
+    homeAddress: 'North Corktown Sublease, Detroit',
+    coordinates: { lat: 42.3368, lng: -83.0748 },
+    assignedStationId: 'hub-corktown',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'North Corktown Shared House',
+    baselineTransitMins: 45,
+    shuttleCommuteMins: 10,
+  },
+  {
+    id: 'worker-trent',
+    name: 'Trent',
+    role: 'Platform Engineer @ Detroit Labs',
+    factoryId: 'fac-1',
+    homeAddress: 'Bagley St Grad Flat, Corktown',
+    coordinates: { lat: 42.3302, lng: -83.0752 },
+    assignedStationId: 'hub-corktown',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Bagley St Grad Flat',
+    baselineTransitMins: 48,
+    shuttleCommuteMins: 10,
+  },
+  {
+    id: 'worker-victor',
+    name: 'Victor',
+    role: 'Systems Engineer @ Capitol Park Tech',
+    factoryId: 'fac-3',
+    homeAddress: 'Porter St Student Co-op, Corktown',
+    coordinates: { lat: 42.3318, lng: -83.0668 },
+    assignedStationId: 'hub-corktown',
+    walkTimeMinutes: 4,
+    shiftTime: '9:00 AM - 5:00 PM',
+    status: 'scheduled',
+    preferredLanguage: 'en',
+    apartmentName: 'Porter St Student Co-op',
+    baselineTransitMins: 46,
+    shuttleCommuteMins: 10,
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Multi-Van Fleet (2 Vans Operating in Parallel)
+// ---------------------------------------------------------------------------
+export const ACTIVE_FLEET_VEHICLES: FleetVehicle[] = [
+  {
+    id: 'fleet-van-08',
+    fleetOperator: 'Metro Detroit Shared Shuttle Co.',
+    licensePlate: 'MI-TR-809',
+    vehicleModel: '2023 Ford Transit 350 HD (15 Passenger)',
+    capacity: 15,
+    driverName: 'Mike Kowalski (Midtown ➔ Downtown)',
+    currentLocation: { lat: 42.3665, lng: -83.0695 },
+    currentSpeedMph: 22,
+    status: 'en_route',
+  },
+  {
+    id: 'fleet-van-04',
+    fleetOperator: 'Metro Detroit Shared Shuttle Co.',
+    licensePlate: 'MI-TR-412',
+    vehicleModel: '2022 Ford Transit 250 (12 Passenger)',
+    capacity: 12,
+    driverName: 'Dave Henderson (Corktown / Rivertown ➔ Downtown)',
+    currentLocation: { lat: 42.3490, lng: -83.0772 },
+    currentSpeedMph: 24,
+    status: 'en_route',
+  },
+];
+
+export const ACTIVE_FLEET_VEHICLE = ACTIVE_FLEET_VEHICLES[0];
+
+// Second Route Geometry for Multi-Shuttle Fleet
+export const ROUTE_2_POLYLINE: [number, number][] = HIGH_RES_ROUTE_2;
+
+// ---------------------------------------------------------------------------
+// Weather
+// ---------------------------------------------------------------------------
+export const DEFAULT_WEATHER: WeatherCondition = {
+  isBlizzardActive: false,
+  severity: 'normal',
+  temperatureF: 28,
+  snowDepthInches: 0,
+  affectedCorridors: [],
+  recommendedDepartureBufferMinutes: 0,
+};
+
+export const SIMULATED_BLIZZARD: WeatherCondition = {
+  isBlizzardActive: true,
+  severity: 'severe_blizzard',
+  temperatureF: 12,
+  snowDepthInches: 5.5,
+  affectedCorridors: [
+    'I-75 North (Stalled vehicle at Mack Ave on-ramp)',
+    'Woodward Ave Southbound (Ice & snow accumulation)',
+  ],
+  recommendedDepartureBufferMinutes: 15,
+};
+
+// ---------------------------------------------------------------------------
+// Cost Allocation
+// ---------------------------------------------------------------------------
+export const INITIAL_COST_ALLOCATION: CostAllocationSummary = {
+  totalCharterCost: 195.0,
+  factoryAShare: 110.0,
+  factoryBShare: 85.0,
+  savingsVsSoloCharterPercent: 54.2,
+  savingsDollarAmount: 230.0,
+  localFleetOperatorPayout: 185.25,
+};
+
+export const SCALED_COST_ALLOCATION: CostAllocationSummary = {
+  totalCharterCost: 380.0,
+  factoryAShare: 210.0,
+  factoryBShare: 170.0,
+  savingsVsSoloCharterPercent: 58.4,
+  savingsDollarAmount: 470.0,
+  localFleetOperatorPayout: 361.0,
+};
+
+// ---------------------------------------------------------------------------
+// Watsonx Decision Logs — Young-Talent Downtown Detroit Storyline
+// ---------------------------------------------------------------------------
+export const INITIAL_WATSONX_LOG: WatsonxDecisionLog = {
+  timestamp: '07:58:42 AM EST',
+  model: 'ibm/granite-3-8b-instruct',
+  triggerEvent: 'Morning Cohort Route Optimization — 10 Young Professionals to 3 Downtown Tech Companies',
+  reasoning: [
+    'COMMUTE BASELINE: Detroit public transit averages 46.5 min door-to-door (walk + bus transfer + wait) for Midtown-to-Downtown trips (U.S. Census ACS S0802).',
+    'LINK MICHIGAN RESULT: Clustered 10 young professionals across TechTown/New Center, Wayne State, Woodbridge, and Brush Park into 4 heated SafeHubs.',
+    'POST-SIMULATION IMPACT: Shuttle door-to-hub-to-desk commute = 11.2 min avg (-75.9% commute time reduction, saving 70.6 mins/day round-trip).',
+    'DOWNTOWN DROP-OFF LOOP: Synchronized 9:00 AM cohort drop-offs across Autobooks (Madison Bldg), Detroit Labs (Woodward Ave), and Capitol Park Tech Collective.',
+  ],
+  actionTaken: 'Dispatched Route #MI-01 across 4 Midtown/Wayne State SafeHubs to 3 Downtown Detroit tech employers.',
+  financialImpact: '54.2% employer shuttle cost reduction via multi-company pooling.',
+  workerNotification: {
+    en: 'Link Michigan: Good morning! Your 9:00 AM shuttle departs Wayne State Hub at 08:26 AM — Shuttle MI-TR-809. Arrive Downtown by 08:48 AM.',
+    es: 'Link Michigan: ¡Buenos días! Tu shuttle de las 9:00 AM sale de Wayne State Hub a las 08:26 AM — Shuttle MI-TR-809.',
+    ar: 'Link Michigan: صباح الخير! حافلتك الساعة 9:00 صباحاً تغادر محطة Wayne State الساعة 08:26 صباحاً.',
+  },
+};
+
+export const SCALED_WATSONX_LOG: WatsonxDecisionLog = {
+  timestamp: '07:55:00 AM EST',
+  model: 'ibm/granite-3-8b-instruct',
+  triggerEvent: 'DBSCAN Spatial Clustering: 16 Young Professionals Partitioned Across 6 SafeHubs',
+  reasoning: [
+    'SPATIAL PARTITION: 16 early-career employees clustered by 400m walking radius into 6 SafeHubs across New Center, Wayne State, Woodbridge, Brush Park, Corktown, and Lafayette Park.',
+    'FLEET BALANCE: Shuttle #809 serves the North/Midtown corridor (New Center, Wayne State, Woodbridge, Brush Park); Shuttle #412 serves the Corktown & Rivertown corridor.',
+    'COMMUTE IMPACT: Avg baseline transit 46.5 min reduced to 11.2 min shuttle door-to-desk (-75.9%). Round-trip savings 70.6 mins/day (295 hrs/year per rider).',
+    'MULTI-EMPLOYER DROP-OFF: Coordinated 9:00 AM arrivals at Autobooks, Detroit Labs, and Capitol Park Tech Collective.',
+  ],
+  actionTaken: 'Dispatched parallel Route #MI-01 and Route #MI-02 across all 6 SafeHubs to 3 Downtown Detroit employers.',
+  financialImpact: '58.4% employer cost reduction across the 3 participating Downtown companies.',
+  workerNotification: {
+    en: 'Link Michigan Fleet Update: Dual shuttles running in parallel to Detroit Labs, Autobooks & Capitol Park Tech. ETA Downtown 08:48 AM.',
+    es: 'Link Michigan Actualización: Dos shuttles en paralelo hacia Detroit Labs, Autobooks y Capitol Park Tech.',
+    ar: 'Link Michigan تحديث الأسطول: حافلتان تعملان بالتوازي إلى شركات وسط المدينة. الوصول 08:48 صباحاً.',
+  },
+};
+
+export const BLIZZARD_WATSONX_LOG: WatsonxDecisionLog = {
+  timestamp: '07:44:22 AM EST',
+  model: 'ibm/granite-3-8b-instruct',
+  triggerEvent: 'Winter Snow Alert: Surface Ice on Woodward — Arterial Detour Active',
+  reasoning: [
+    'WEATHER IMPACT: Winter snow slows surface streets by +14 mins. Standard departure would delay the 9:00 AM engineering standups at Detroit Labs and Autobooks.',
+    'AUTONOMOUS MITIGATION: Reverse-scheduled dispatch clock. Advanced all SafeHub departure times by +12 minutes.',
+    'SAFETY PROTOCOL: Rerouted along priority-plowed arterials into Downtown Detroit (Capitol Park, Woodward Ave, and Grand Circus Park).',
+    'RIDER COMFORT: All neighborhood SafeHubs confirmed ACTIVE heating status — zero outdoor cold exposure.',
+  ],
+  actionTaken: 'Pushed early boarding alert to all riders. Updated Driver HUD with snow-safe arterial route.',
+  financialImpact: '100% on-time 9:00 AM arrival across all 3 Downtown Detroit employers.',
+  workerNotification: {
+    en: '⚠️ Link Michigan Weather Alert: Snow detour active. Shuttle departs 12 mins EARLY. Wait inside your heated SafeHub!',
+    es: '⚠️ Link Michigan Alerta Clima: Desvío por nieve activo. Tu shuttle sale 12 min ANTES. ¡Espera dentro del SafeHub calefaccionado!',
+    ar: '⚠️ Link Michigan تنبيه الطقس: تم تقديم موعد الحافلة 12 دقيقة مبكراً. ابقَ داخل المحطة الدافئة!',
+  },
+};

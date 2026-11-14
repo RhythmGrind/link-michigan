@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="windshield" x1="16" y1="9" x2="16" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#7dd3fc"/>
+    </linearGradient>
+    <linearGradient id="headlight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle App Badge -->
+  <rect width="32" height="32" rx="7.5" fill="url(#bgGrad)"/>
+
+  <!-- Subtle Rim Glow -->
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="6.75" stroke="#60a5fa" stroke-opacity="0.3" stroke-width="1.5"/>
+
+  <!-- Tires -->
+  <rect x="5.5" y="21" width="3.5" height="5" rx="1.5" fill="#0f172a"/>
+  <rect x="23" y="21" width="3.5" height="5" rx="1.5" fill="#0f172a"/>
+
+  <!-- Shuttle Main Body -->
+  <path d="M7 11C7 8.5 8.5 6.5 11 6.5H21C23.5 6.5 25 8.5 25 11V21C25 22.5 24 23.5 22.5 23.5H9.5C8 23.5 7 22.5 7 21V11Z" fill="#ffffff"/>
+
+  <!-- Top Route / Destination LED Matrix -->
+  <rect x="11.5" y="7.5" width="9" height="1.8" rx="0.9" fill="#10b981"/>
+
+  <!-- Panoramic Windshield -->
+  <path d="M8.5 11.2C8.5 10.2 9.2 9.5 10.2 9.5H21.8C22.8 9.5 23.5 10.2 23.5 11.2V15.5H8.5V11.2Z" fill="url(#windshield)"/>
+  
+  <!-- Windshield Reflection -->
+  <path d="M9.5 10.5H13.5L11.5 14.5H8.8L9.5 10.5Z" fill="#ffffff" fill-opacity="0.35"/>
+
+  <!-- Center Cabin Divider -->
+  <rect x="15.5" y="9.5" width="1" height="6" fill="#0284c7" fill-opacity="0.3"/>
+
+  <!-- Front Grille / Sensor Bar -->
+  <rect x="10.5" y="19" width="11" height="2.5" rx="1.2" fill="#1e293b"/>
+  <!-- Link Michigan Badge inside Grille -->
+  <circle cx="16" cy="20.2" r="0.9" fill="#38bdf8"/>
+
+  <!-- Modern Dual LED Headlights -->
+  <rect x="8" y="17" width="3.2" height="1.8" rx="0.8" fill="url(#headlight)"/>
+  <rect x="20.8" y="17" width="3.2" height="1.8" rx="0.8" fill="url(#headlight)"/>
+
+  <!-- Side Mirrors -->
+  <rect x="4.5" y="12" width="2" height="3" rx="0.8" fill="#e2e8f0"/>
+  <rect x="25.5" y="12" width="2" height="3" rx="0.8" fill="#e2e8f0"/>
+
+  <!-- Lower Bumper Lip -->
+  <rect x="9" y="22.5" width="14" height="1.2" rx="0.6" fill="#94a3b8"/>
+</svg>
